@@ -51,10 +51,11 @@ namespace IdentityManager.Controllers
         }
         
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
             await _userSignInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
         // Helper Method
         private void AddErrors(IdentityResult result)
