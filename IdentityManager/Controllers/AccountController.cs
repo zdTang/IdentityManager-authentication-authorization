@@ -20,12 +20,14 @@ namespace IdentityManager.Controllers
         {
             return View();
         }
+        
         [HttpGet]
         public IActionResult Register()
         {
             var registerViewModel = new RegisterViewModel();
             return View(registerViewModel); 
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -48,6 +50,12 @@ namespace IdentityManager.Controllers
 
         }
         
+        [HttpPost]
+        public async Task<IActionResult> LogOff()
+        {
+            await _userSignInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
         // Helper Method
         private void AddErrors(IdentityResult result)
         {
