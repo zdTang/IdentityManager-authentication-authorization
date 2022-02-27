@@ -42,17 +42,21 @@ namespace IdentityManager.Controllers
                     await _userSignInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
-                
-                // check if the usrName is available, if Yes then create 
-                
-                // if No, return a  New Error message !
-                ModelState.AddModelError("Occupied","The userName has been occupied !");
-                return View(model); 
+                AddErrors(result);
             }
-           else
-           {
-               return View(model); 
-           }
+            return View(model); 
+
         }
+        
+        // Helper Method
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            
+        }
+        
     }
 }
