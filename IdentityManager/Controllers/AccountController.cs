@@ -2,6 +2,7 @@
 using IdentityManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SignInResult = Microsoft.AspNetCore.Mvc.SignInResult;
 
 namespace IdentityManager.Controllers
 {
@@ -59,23 +60,29 @@ namespace IdentityManager.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                //// create a user instance
-                //var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name };
+               
+                // Login a user
+                // The last parameter is to say, if the login is failed, if we lockout the user?
+                var result = await _userSignInManager.PasswordSignInAsync(model.Email,model.Password,model.RememberMe,false);
+               // This approach need use IdentityUser Object
+               //var result2 = await _userSignInManager.SignInAsync();
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                //AddErrors(result.);   // SignInResult has not Errors property
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
                 
-                //// Need UserManger to create a new USER !
-                //var result = await _userManager.CreateAsync(user, model.Password);
-                //if (result.Succeeded)
-                //{
-                //    await _userSignInManager.SignInAsync(user, isPersistent: false);
-                //    return RedirectToAction("Index", "Home");
-                //}
-                //AddErrors(result);
             }
-            return View(model); 
+            return View(model);  
 
         }
         
