@@ -30,8 +30,8 @@ namespace IdentityManager
                 options=>options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             
             // UserManager has been registered as well !
-            //services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             
             services.AddControllersWithViews();
         }

@@ -8,10 +8,10 @@ namespace IdentityManager.Controllers
     public class AccountController : Controller
     {
        // private readonly UserManager<IdentityUser> _userManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _userSignInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _userSignInManager;
        
-        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> userSignInManager)
+        public AccountController(UserManager<IdentityUser> userManager,SignInManager<IdentityUser> userSignInManager)
         {
             _userManager = userManager;
             _userSignInManager = userSignInManager;

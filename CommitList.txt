@@ -4,3 +4,6 @@
                and we have added a "Name" in it. so the Table has changed.
                if we still use IdentityUser as Type parameter, can we operate "Name" field?
                In a screenshot, it depicts the ERROR when using DI.   The registerd service is not same as the service we want to retrieve.
+     
+     option 2 : using IdentityUser as Type parameter, it still works.  Try to find out the reason.
+               we have already added a new Extra field. so that it seems no problem to use a base class for representing the child class.
