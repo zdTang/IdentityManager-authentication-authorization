@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityManager.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace IdentityManager
@@ -27,8 +28,10 @@ namespace IdentityManager
         {
             services.AddDbContext<ApplicationDbContext>(
                 options=>options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            // UserManager has been registered as well !
+            //services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             
             services.AddControllersWithViews();
         }

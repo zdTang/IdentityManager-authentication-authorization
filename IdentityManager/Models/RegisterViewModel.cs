@@ -15,7 +15,7 @@ namespace IdentityManager.Models
         [Required]
         [Display(Name="Password")]
         [DataType(DataType.Password)]
-        [StringLength(100, ErrorMessage ="The {0} must be at least {1} characters long.",MinimumLength =6)]
+        [StringLength(120, ErrorMessage ="The {0} must be at least {1} characters long.",MinimumLength =6)]
         public string Password { get; set; }
 
 

@@ -1,0 +1,6 @@
+#2-7 
+     option 1: using ApplicationUser other than IdentityUser
+               I am not very clear. We use a Model class called ApplicationUser which derive IdentityUser.
+               and we have added a "Name" in it. so the Table has changed.
+               if we still use IdentityUser as Type parameter, can we operate "Name" field?
+               In a screenshot, it depicts the ERROR when using DI.   The registerd service is not same as the service we want to retrieve.
