@@ -17,3 +17,7 @@
       My approach: use User object to get necessary Information
       
       Instructor's Approach.   Using SignInManager and UserManager to get necessary Information from "User" object , Is it necessary? which one is best practice?
+
+# 2-8 logIn View
+      I don't think his approach is correct.
+      https://getbootstrap.com/docs/5.1/forms/form-control/   Check Bootstrap Examples for Layout
