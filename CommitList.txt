@@ -15,3 +15,5 @@
 
 # 2-7 Display User's Name
       My approach: use User object to get necessary Information
+      
+      Instructor's Approach.   Using SignInManager and UserManager to get necessary Information from "User" object , Is it necessary? which one is best practice?
