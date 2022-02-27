@@ -50,6 +50,35 @@ namespace IdentityManager.Controllers
 
         }
         
+        [HttpGet]
+        public IActionResult Login()
+        {
+            var loginViewModel = new LoginViewModel();
+            return View(loginViewModel); 
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //// create a user instance
+                //var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name };
+                
+                //// Need UserManger to create a new USER !
+                //var result = await _userManager.CreateAsync(user, model.Password);
+                //if (result.Succeeded)
+                //{
+                //    await _userSignInManager.SignInAsync(user, isPersistent: false);
+                //    return RedirectToAction("Index", "Home");
+                //}
+                //AddErrors(result);
+            }
+            return View(model); 
+
+        }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()

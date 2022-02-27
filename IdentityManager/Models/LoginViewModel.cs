@@ -2,7 +2,7 @@
 
 namespace IdentityManager.Models
 {
-    public class LogViewModel
+    public class LoginViewModel
     {
         [Required]
         [EmailAddress]
