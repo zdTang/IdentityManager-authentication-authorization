@@ -51,8 +51,15 @@ namespace IdentityManager.Controllers
 
         }
         
+        /// <summary>
+        /// The returnURL will be appended by the Framework when be directed here from other Action
+        /// For example, When I was not login, and I tried to access an Method "Privacy"  which use [Authenticate]
+        /// I will be redirected here and 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl=null)
         {
             var loginViewModel = new LoginViewModel();
             return View(loginViewModel); 
