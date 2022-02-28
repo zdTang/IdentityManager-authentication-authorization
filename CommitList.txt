@@ -24,3 +24,8 @@
 # 2-9 SignIn 
       They are several approaches to sign in, the difference is they need different parameters!
       Is there an approach which can describe why and what reason caused the failure.
+# 2-10 
+      Authentication + Redirection
+      when a un-signIn user try to access an action which required [Authenticate], it will be redirect to SignIn action.
+      Who decide that I must go this URL? How to configure the setup?
+      https://stackoverflow.com/questions/42105434/asp-net-core-change-default-redirect-for-unauthorized
