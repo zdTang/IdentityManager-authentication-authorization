@@ -54,20 +54,29 @@ namespace IdentityManager.Controllers
         /// <summary>
         /// The returnURL will be appended by the Framework when be directed here from other Action
         /// For example, When I was not login, and I tried to access an Method "Privacy"  which use [Authenticate]
-        /// I will be redirected here and 
+        /// I will be redirected here and a returnUrl will be appended to the URL
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpGet]
         public IActionResult Login(string returnUrl=null)
         {
-            var loginViewModel = new LoginViewModel();
-            return View(loginViewModel); 
+            // here the empty viewModel is not necessary!
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(); 
         }
         
+        /// <summary>
+        /// Be aware of the parameters
+        /// The model come from Form body
+        /// The returnUrl comes from queryString
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl=null)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +88,8 @@ namespace IdentityManager.Controllers
                //var result2 = await _userSignInManager.SignInAsync();
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    // Be aware the difference between RedirectionToAction and Redirect
+                    return returnUrl==null ? RedirectToAction("Index", "Home") : Redirect(returnUrl) ;
                 }
                 //AddErrors(result.);   // SignInResult has not Errors property
                 else

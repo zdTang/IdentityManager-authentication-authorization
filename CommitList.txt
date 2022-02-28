@@ -29,3 +29,6 @@
       when a un-signIn user try to access an action which required [Authenticate], it will be redirect to SignIn action.
       Who decide that I must go this URL? How to configure the setup?
       https://stackoverflow.com/questions/42105434/asp-net-core-change-default-redirect-for-unauthorized
+
+      Be aware the difference between RedirectionToAction and Redirect
+      use ViewData to pass value from backEnd-frontEnd-backEnd  (pass returnUrl)

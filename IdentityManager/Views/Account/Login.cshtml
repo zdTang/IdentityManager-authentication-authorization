@@ -2,7 +2,7 @@
 @model LoginViewModel
 
 
-<form asp-controller="Account" asp-action="Login" method="post" role="form">
+<form asp-controller="Account" asp-action="Login" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]" role="form">
     <h4>Login</h4>
     <hr/>
     <div asp-validation-summary="All" class="text-danger"></div>
