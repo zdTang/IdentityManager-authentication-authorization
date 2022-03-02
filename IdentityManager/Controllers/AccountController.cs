@@ -22,17 +22,23 @@ namespace IdentityManager.Controllers
             return View();
         }
         
+        // Here, I don't think the returnUrl is necessary !!
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl=null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             var registerViewModel = new RegisterViewModel();
             return View(registerViewModel); 
         }
         
+        
+        // Here, I don't think the returnUrl is necessary !!
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model,string returnUrl=null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+            
             if (ModelState.IsValid)
             {
                 // create a user instance
@@ -43,7 +49,8 @@ namespace IdentityManager.Controllers
                 if (result.Succeeded)
                 {
                     await _userSignInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    //return RedirectToAction("Index", "Home");
+                    return LocalRedirect(returnUrl??Url.Content("~/"));
                 }
                 AddErrors(result);
             }
@@ -89,7 +96,7 @@ namespace IdentityManager.Controllers
                 if (result.Succeeded)
                 {
                     // Be aware the difference between RedirectionToAction and Redirect
-                    return returnUrl==null ? RedirectToAction("Index", "Home") : Redirect(returnUrl) ;
+                    return returnUrl==null ? RedirectToAction("Index", "Home") : LocalRedirect(returnUrl) ;
                 }
                 //AddErrors(result.);   // SignInResult has not Errors property
                 else

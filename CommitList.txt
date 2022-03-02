@@ -32,3 +32,10 @@
 
       Be aware the difference between RedirectionToAction and Redirect
       use ViewData to pass value from backEnd-frontEnd-backEnd  (pass returnUrl)
+
+#2-12 I don't think those returnUrl is useful for the Register Action(Get and Post)
+      As there is no returnUrl will be passed into these two Action. 
+      While for Login Action. once a un-login user try to access an Action with [Authenticate], the request will be redirect to Login Action and the ReturnUrl will be passed here directly.
+
+      use  LocalRedirect() to avoid bad redirection!
+      return LocalRedirect(returnUrl??Url.Content("~/"));
