@@ -32,7 +32,16 @@ namespace IdentityManager
             // UserManager has been registered as well !
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-            
+            services.Configure<IdentityOptions>(opt =>
+            {
+                /*Do some research here and understand how to setup option*/
+                
+                opt.Password.RequiredLength = 6;
+                opt.Password.RequireLowercase = true;
+                // Gets or sets the TimeSpan a user is locked out for when a lockout occurs. Defaults to 5 minutes.
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                opt.Lockout.MaxFailedAccessAttempts = 5;
+            });
             services.AddControllersWithViews();
         }
 

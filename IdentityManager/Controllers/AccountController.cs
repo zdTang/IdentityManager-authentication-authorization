@@ -89,8 +89,8 @@ namespace IdentityManager.Controllers
             {
                
                 // Login a user
-                // The last parameter is to say, if the login is failed, if we lockout the user?
-                var result = await _userSignInManager.PasswordSignInAsync(model.Email,model.Password,model.RememberMe,false);
+                // The last parameter is to say, if the login is failed, exceed the maximum times, if we lockout the user?
+                var result = await _userSignInManager.PasswordSignInAsync(model.Email,model.Password,model.RememberMe,lockoutOnFailure:true);
                // This approach need use IdentityUser Object
                //var result2 = await _userSignInManager.SignInAsync();
                 if (result.Succeeded)
@@ -98,12 +98,16 @@ namespace IdentityManager.Controllers
                     // Be aware the difference between RedirectionToAction and Redirect
                     return returnUrl==null ? RedirectToAction("Index", "Home") : LocalRedirect(returnUrl) ;
                 }
-                //AddErrors(result.);   // SignInResult has not Errors property
-                else
+
+                if (result.IsLockedOut)
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return View("Lockout");
                 }
+                //AddErrors(result.);   // SignInResult has not Errors property
+                
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View(model);
+                
                 
             }
             return View(model);  
