@@ -63,8 +63,7 @@ namespace IdentityManager.Controllers
         /// For example, When I was not login, and I tried to access an Method "Privacy"  which use [Authenticate]
         /// I will be redirected here and a returnUrl will be appended to the URL
         /// </summary>
-        /// <param name="returnUrl"></param>
-        /// <returns></returns>
+
         [HttpGet]
         public IActionResult Login(string returnUrl=null)
         {
@@ -73,14 +72,7 @@ namespace IdentityManager.Controllers
             return View(); 
         }
         
-        /// <summary>
-        /// Be aware of the parameters
-        /// The model come from Form body
-        /// The returnUrl comes from queryString
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="returnUrl"></param>
-        /// <returns></returns>
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl=null)
@@ -130,6 +122,30 @@ namespace IdentityManager.Controllers
             }
             
         }
-        
+
+
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+               
+
+            }
+            return View(model);
+
+        }
+
     }
 }
+
+
