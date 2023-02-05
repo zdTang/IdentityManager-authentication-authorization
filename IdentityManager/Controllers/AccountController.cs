@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using IdentityManager.Models;
+﻿using IdentityManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using SignInResult = Microsoft.AspNetCore.Mvc.SignInResult;
+using System.Threading.Tasks;
 
 namespace IdentityManager.Controllers
 {
@@ -173,7 +172,7 @@ namespace IdentityManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -181,18 +180,25 @@ namespace IdentityManager.Controllers
                 if (user == null)
                 {
                     // If the user is not in DB, We should let him know and lead him to Register page
-                    return RedirectToAction("ForgotPasswordConfirmation");
+                    return RedirectToAction("ResetPasswordConfirmation");
                 }
 
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code },
-                    protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(model.Email, "Reset Password - Identity Manager",
-                    "Please reset your password by clicking here:<a href=\"" + callbackUrl + "\">link</a>");
-                return RedirectToAction("ForgotPasswordConfirmation");
+                var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ResetPasswordConfirmation");
+                }
+                AddErrors(result);
             }
-            return View(model);
+            return View();
 
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
 
     }
