@@ -41,3 +41,8 @@
       return LocalRedirect(returnUrl??Url.Content("~/"));
 #3-4  Check oneNotes for detailed note and screenshot
 	  I also update those libraries from 5 to 6.
+	  
+#3-5-6
+	 Email works now. Must use a real Email as receiver.
+	 and the URL in the Email can trigger View in my local server, strange
+	 See oneNotes for details.
