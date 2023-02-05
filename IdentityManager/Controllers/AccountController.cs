@@ -164,10 +164,35 @@ namespace IdentityManager.Controllers
 
         }
 
+        /*The URL in the Email will trigger this Action to help user reset password*/
         [HttpGet]
-        public IActionResult ResetPassword()
+        public IActionResult ResetPassword(string code=null)
         {
-            return View();
+            return code==null?View("Error"):View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    // If the user is not in DB, We should let him know and lead him to Register page
+                    return RedirectToAction("ForgotPasswordConfirmation");
+                }
+
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code },
+                    protocol: HttpContext.Request.Scheme);
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password - Identity Manager",
+                    "Please reset your password by clicking here:<a href=\"" + callbackUrl + "\">link</a>");
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+            return View(model);
+
         }
 
     }
