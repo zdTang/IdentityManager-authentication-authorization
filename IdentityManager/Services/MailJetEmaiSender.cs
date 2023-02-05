@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO.Pipelines;
 using System.Threading.Tasks;
 using Mailjet.Client;
 using Mailjet.Client.Resources;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
@@ -11,7 +13,7 @@ namespace IdentityManager.Services
     public class MailJetEmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
-        MailJetEmailSender(IConfiguration configuration)
+        public MailJetEmailSender(IConfiguration configuration)
         {
             _configuration = configuration;
 
@@ -20,13 +22,15 @@ namespace IdentityManager.Services
         //https://dev.mailjet.com/email/guides/send-api-V3/#send-api-v3-to-v3.1
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            MailjetClient client = new MailjetClient(_configuration["MailJet:ApiKey"], _configuration["MailJet:SecretKey"]);
-            MailjetRequest request = new MailjetRequest
+            var apiKey = _configuration["MailJet:ApiKey"];
+            var secretKey = _configuration["MailJet:SecretKey"];
+            var client = new MailjetClient(apiKey, secretKey);
+            var request = new MailjetRequest
                 {
                     Resource = Send.Resource,
                 }
-                .Property(Send.FromEmail, "pilot@mailjet.com")
-                .Property(Send.FromName, "Mailjet Pilot")
+                .Property(Send.FromEmail, "mikesoftware@protonmail.com")
+                .Property(Send.FromName, "Mike software")
                 .Property(Send.Subject, subject)
                 .Property(Send.TextPart, "Dear passenger, welcome to Mailjet! May the delivery force be with you!")
                 .Property(Send.HtmlPart, htmlMessage)

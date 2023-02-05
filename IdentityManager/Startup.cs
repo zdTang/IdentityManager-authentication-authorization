@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using IdentityManager.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace IdentityManager
 {
@@ -25,7 +27,7 @@ namespace IdentityManager
                 options=>options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             
             // UserManager has been registered as well !
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.Configure<IdentityOptions>(opt =>
             {
@@ -37,6 +39,8 @@ namespace IdentityManager
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
                 opt.Lockout.MaxFailedAccessAttempts = 5;
             });
+            //Inject dependency
+            services.AddTransient<IEmailSender, MailJetEmailSender>();
             services.AddControllersWithViews();
         }
 
