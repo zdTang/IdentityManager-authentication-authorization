@@ -51,3 +51,10 @@
      There is one logic which is not very accurate. 
 	 when valid the user's Email, if the Email is not valid, we should redirect the User to Register !!!
 	 other than let send Reset URL to his unValid Email. which is meaningless.
+
+#3  The email + register comfirmation is workable,but the logic is not properly.  
+    a, before confirm user's email, should not log him in automatically.
+    b, after user click the confirmation URL, We can log him in automatically other than ask him to login manually.
+    will do later.
+    Other description see OneNotes.
+    take care of [httpPost] and [httpGet]
