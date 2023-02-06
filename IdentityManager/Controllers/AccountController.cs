@@ -56,9 +56,10 @@ namespace IdentityManager.Controllers
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                         "Please confirm your account by clicking here:<a href=\"" + callbackUrl + "\">link</a>");
 
-                    await _userSignInManager.SignInAsync(user, isPersistent: false);
-                    //return RedirectToAction("Index", "Home");
-                    return LocalRedirect(returnUrl??Url.Content("~/"));
+                    //await _userSignInManager.SignInAsync(user, isPersistent: false);
+
+                    //return LocalRedirect(returnUrl??Url.Content("~/"));
+                    return View("TellUserConfirmEmail");
                 }
                 AddErrors(result);
             }
@@ -82,7 +83,13 @@ namespace IdentityManager.Controllers
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            if (result.Succeeded)
+            {
+                await _userSignInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("Index","Home");
+            }
+           
+            return View("Error");
         }
 
         /// <summary>
