@@ -46,3 +46,8 @@
 	 Email works now. Must use a real Email as receiver.
 	 and the URL in the Email can trigger View in my local server, strange
 	 See oneNotes for details.
+	 
+#3-8 Reset password works.
+     There is one logic which is not very accurate. 
+	 when valid the user's Email, if the Email is not valid, we should redirect the User to Register !!!
+	 other than let send Reset URL to his unValid Email. which is meaningless.

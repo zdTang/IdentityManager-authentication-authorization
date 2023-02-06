@@ -50,6 +50,12 @@ namespace IdentityManager.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+                        protocol: HttpContext.Request.Scheme);
+                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                        "Please confirm your account by clicking here:<a href=\"" + callbackUrl + "\">link</a>");
+
                     await _userSignInManager.SignInAsync(user, isPersistent: false);
                     //return RedirectToAction("Index", "Home");
                     return LocalRedirect(returnUrl??Url.Content("~/"));
@@ -59,7 +65,26 @@ namespace IdentityManager.Controllers
             return View(model); 
 
         }
-        
+
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
+
         /// <summary>
         /// The returnURL will be appended by the Framework when be directed here from other Action
         /// For example, When I was not login, and I tried to access an Method "Privacy"  which use [Authenticate]
@@ -200,6 +225,8 @@ namespace IdentityManager.Controllers
         {
             return View();
         }
+
+       
 
     }
 }
