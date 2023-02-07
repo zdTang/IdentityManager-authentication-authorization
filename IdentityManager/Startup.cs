@@ -38,6 +38,7 @@ namespace IdentityManager
                 // Gets or sets the TimeSpan a user is locked out for when a lockout occurs. Defaults to 5 minutes.
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
                 opt.Lockout.MaxFailedAccessAttempts = 5;
+                opt.SignIn.RequireConfirmedAccount = true;
             });
             //Inject dependency
             services.AddTransient<IEmailSender, MailJetEmailSender>();
