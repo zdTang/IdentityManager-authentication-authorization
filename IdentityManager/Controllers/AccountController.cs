@@ -181,7 +181,7 @@ namespace IdentityManager.Controllers
                 if (user == null)
                 {
                     // If the user is not in DB, We should let him know and lead him to Register page
-                    return RedirectToAction("ForgotPasswordConfirmation");
+                    return View("WrongProvidedEmail");
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
