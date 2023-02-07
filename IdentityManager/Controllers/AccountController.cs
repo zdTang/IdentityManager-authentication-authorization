@@ -1,4 +1,5 @@
-﻿using IdentityManager.Models;
+﻿using System.Security.Claims;
+using IdentityManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -241,6 +242,38 @@ namespace IdentityManager.Controllers
             var redirecturl=Url.Action("ExternalLoginCallback","Account",new {returnUrl});
             var properties = _userSignInManager.ConfigureExternalAuthenticationProperties(provider, redirecturl);
             return Challenge(properties, provider);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError=null)
+        {
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty,$"Error from external provider:{remoteError}");
+                return View(nameof(Login));
+            }
+
+            var info = await _userSignInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            // Sign in the user with this external login provider, if the user already has a login
+            var result =
+                await _userSignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
+                    isPersistent: false);
+            if (result.Succeeded)
+            {
+                //update any authentication tokens
+                await _userSignInManager.UpdateExternalAuthenticationTokensAsync(info);
+                return LocalRedirect(returnUrl);
+            }
+            //If the user does not have account,then we will ask the user to create an account
+            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
         }
 
     }
