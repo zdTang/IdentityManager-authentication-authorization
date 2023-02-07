@@ -233,7 +233,15 @@ namespace IdentityManager.Controllers
             return View();
         }
 
-       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string returnUrl=null)
+        {
+            // request a redirect to the external login provider
+            var redirecturl=Url.Action("ExternalLoginCallback","Account",new {returnUrl});
+            var properties = _userSignInManager.ConfigureExternalAuthenticationProperties(provider, redirecturl);
+            return Challenge(properties, provider);
+        }
 
     }
 }
