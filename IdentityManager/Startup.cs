@@ -42,6 +42,11 @@ namespace IdentityManager
             });
             //Inject dependency
             services.AddTransient<IEmailSender, MailJetEmailSender>();
+            services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = Configuration["Facebook:ApiKey"];
+                options.AppSecret = Configuration["Facebook:SecretKey"];
+            });
             services.AddControllersWithViews();
         }
 

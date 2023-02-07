@@ -457,3 +457,4 @@ $RECYCLE.BIN/
 *.db-wal
 
 IdentityManager/appsettings.json
+/IdentityManager/appsettings.json
