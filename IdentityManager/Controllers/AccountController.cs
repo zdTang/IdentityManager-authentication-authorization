@@ -149,14 +149,7 @@ namespace IdentityManager.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
         // Helper Method
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-            
-        }
+
 
 
 
@@ -234,6 +227,11 @@ namespace IdentityManager.Controllers
             return View();
         }
 
+        /*==============
+         Once click the "facebook".. button on the Login page
+         The execution will come here.
+        1, here to tell the "External login" which endpoint can be used to callback
+         ===============*/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnUrl=null)
@@ -244,6 +242,17 @@ namespace IdentityManager.Controllers
             return Challenge(properties, provider);
         }
 
+
+
+        /*==============
+         Once click the "login" of the "facebook" page's  Login button
+         The execution will come here.
+        
+        1, here to we can check if External authentication is successful.
+        if success: two use cases:
+         a: it is already a registered user.
+         b: it is a new user
+         ===============*/
 
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError=null)
@@ -312,6 +321,22 @@ namespace IdentityManager.Controllers
 
             ViewData["ReturnUrl"] = returnUrl;
             return View(model);
+        }
+
+
+        public async Task<IActionResult> EnableAuthenticator()
+        {
+
+        }
+
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
         }
 
     }
