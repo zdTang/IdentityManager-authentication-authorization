@@ -277,6 +277,10 @@ namespace IdentityManager.Controllers
                 await _userSignInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return LocalRedirect(returnUrl);
             }
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction("VerifyAuthenticatorCode", new { returnurl = returnurl });
+            }
             //If the user does not have account,then we will ask the user to create an account
             ViewData["ReturnUrl"] = returnUrl;
             ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
@@ -351,9 +355,12 @@ namespace IdentityManager.Controllers
                 }
 
             }
-            return RedirectToAction("AuthenticatorConfirmation");
+            return RedirectToAction(nameof(AuthenticatorConfirmation));
         }
-
+        public IActionResult AuthenticatorConfirmation()
+        {
+            return View();
+        }
 
         private void AddErrors(IdentityResult result)
         {
