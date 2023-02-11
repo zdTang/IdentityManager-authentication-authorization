@@ -362,6 +362,16 @@ namespace IdentityManager.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnUrl = null)
+        {
+            var user = await _userSignInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            return View(new VerifyAuthenticatorViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
+        }
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
