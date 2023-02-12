@@ -282,7 +282,7 @@ namespace IdentityManager.Controllers
             }
             if (result.RequiresTwoFactor)
             {
-                return RedirectToAction("VerifyAuthenticatorCode", new { returnurl = returnurl });
+                return RedirectToAction("VerifyAuthenticatorCode", new { returnurl = returnUrl });
             }
             //If the user does not have account,then we will ask the user to create an account
             ViewData["ReturnUrl"] = returnUrl;
