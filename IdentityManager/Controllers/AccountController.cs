@@ -263,6 +263,7 @@ namespace IdentityManager.Controllers
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError=null)
         {
+            returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty,$"Error from external provider:{remoteError}");
@@ -345,6 +346,16 @@ namespace IdentityManager.Controllers
             string AuthenticatorUri = string.Format(AuthenticatorUriFormat, _urlEncoder.Encode("IdentityManager"), _urlEncoder.Encode(user.Email), token);
             var viewModel = new TwoFactorAuthenticationViewModel { Token = token, QRCodeUrl = AuthenticatorUri };
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveAuthenticator()
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+            await _userManager.SetTwoFactorEnabledAsync(user, false);
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         [HttpPost]
