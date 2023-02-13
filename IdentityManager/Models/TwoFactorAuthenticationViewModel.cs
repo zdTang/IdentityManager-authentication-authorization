@@ -7,5 +7,6 @@
 
         //used to register/sign up
         public string Token { set; get; }
+        public string QRCodeUrl { get; set; }
     }
 }
