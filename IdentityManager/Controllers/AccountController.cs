@@ -16,14 +16,16 @@ namespace IdentityManager.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _userSignInManager;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly UrlEncoder _urlEncoder;
-        public AccountController(UserManager<IdentityUser> userManager,SignInManager<IdentityUser> userSignInManager,IEmailSender emailSender, UrlEncoder urlEncoder)
+        public AccountController(UserManager<IdentityUser> userManager,SignInManager<IdentityUser> userSignInManager, IEmailSender emailSender, UrlEncoder urlEncoder, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userSignInManager = userSignInManager;
             _emailSender = emailSender;
             _urlEncoder = urlEncoder;
+            _roleManager = roleManager;
         }
         public IActionResult Index()
         {
@@ -33,8 +35,14 @@ namespace IdentityManager.Controllers
         // Here, I don't think the returnUrl is necessary !!
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register(string returnUrl=null)
+        public async Task<IActionResult> Register(string returnUrl=null)
         {
+            if (!await _roleManager.RoleExistsAsync("Admin")) // Tang: I don't like this approach, it will check for every register, not necessary
+            {
+                //create roles
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                await _roleManager.CreateAsync(new IdentityRole("User"));
+            }
             ViewData["ReturnUrl"] = returnUrl;
             var registerViewModel = new RegisterViewModel();
             return View(registerViewModel); 
