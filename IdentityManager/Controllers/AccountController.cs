@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using Mailjet.Client.Resources;
 
 namespace IdentityManager.Controllers
 {
@@ -43,8 +46,22 @@ namespace IdentityManager.Controllers
                 await _roleManager.CreateAsync(new IdentityRole("Admin"));
                 await _roleManager.CreateAsync(new IdentityRole("User"));
             }
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem()
+            {
+                Value = "Admin",
+                Text = "Admin"
+            });
+            listItems.Add(new SelectListItem()
+            {
+                Value = "User",
+                Text = "User"
+            });
             ViewData["ReturnUrl"] = returnUrl;
-            var registerViewModel = new RegisterViewModel();
+            var registerViewModel = new RegisterViewModel()
+            {
+                RoleList = listItems
+            }; ;
             return View(registerViewModel); 
         }
         
@@ -66,6 +83,14 @@ namespace IdentityManager.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    if (model.RoleSelected != null && model.RoleSelected.Length > 0 && model.RoleSelected == "Admin")
+                    {
+                        await _userManager.AddToRoleAsync(user, "Admin");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, "User");
+                    }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
                         protocol: HttpContext.Request.Scheme);
@@ -347,6 +372,8 @@ namespace IdentityManager.Controllers
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+
+                        await _userManager.AddToRoleAsync(user, "User"); 
                         await _userSignInManager.SignInAsync(user, isPersistent: false);
                         await _userSignInManager.UpdateExternalAuthenticationTokensAsync(info);
                         return LocalRedirect(returnUrl);

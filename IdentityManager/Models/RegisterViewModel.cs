@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace IdentityManager.Models
 {
@@ -26,5 +28,8 @@ namespace IdentityManager.Models
         
         [Required]
         public string Name { get; set; }
+
+        public IEnumerable<SelectListItem> RoleList { get; set; }
+        public string RoleSelected { get; set; }
     }
 }
