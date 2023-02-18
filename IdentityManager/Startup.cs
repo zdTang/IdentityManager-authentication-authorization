@@ -40,6 +40,10 @@ namespace IdentityManager
                 opt.Lockout.MaxFailedAccessAttempts = 5;
                 //opt.SignIn.RequireConfirmedAccount = true;
             });
+            services.ConfigureApplicationCookie(opt =>
+            {
+                opt.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/AccessDenied");  // Set up the AccessDeniedPath! The framework need this action, we can specify which action we want use
+            });
             //Inject dependency
             services.AddTransient<IEmailSender, MailJetEmailSender>();
             services.AddAuthentication().AddFacebook(options =>
