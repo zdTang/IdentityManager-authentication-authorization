@@ -102,6 +102,19 @@ namespace IdentityManager.Controllers
                     return View("TellUserConfirmEmail");
                 }
                 AddErrors(result);
+                //Re-bind the Dropdown list to the Model, or the dropdown will not display( Normal MVC bug)
+                List<SelectListItem> listItems = new List<SelectListItem>();
+                listItems.Add(new SelectListItem()
+                {
+                    Value = "Admin",
+                    Text = "Admin"
+                });
+                listItems.Add(new SelectListItem()
+                {
+                    Value = "User",
+                    Text = "User"
+                });
+                model.RoleList = listItems;
             }
             return View(model); 
 
