@@ -2,6 +2,7 @@
 using IdentityManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -95,6 +96,32 @@ namespace IdentityManager.Controllers
                 Value = u.Id
             });
             return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult LockUnlock(string userId)
+        {
+            var objFromDb = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
+            if (objFromDb == null)
+            {
+                return NotFound();
+            }
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                //user is locked and will remain locked untill lockoutend time
+                //clicking on this action will unlock them
+                objFromDb.LockoutEnd = DateTime.Now;
+                TempData[Notification.Success] = "User unlocked successfully.";
+            }
+            else
+            {
+                //user is not locked, and we want to lock the user
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+                TempData[Notification.Success] = "User locked successfully.";
+            }
+            _db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+
         }
 
     }
