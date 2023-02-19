@@ -48,20 +48,28 @@ namespace IdentityManager.Controllers
             if (await _roleManager.RoleExistsAsync(roleObj.Name))
             {
                 //error
+                TempData[Notification.Error] = "Role already exists.";
+                return RedirectToAction(nameof(Index));
             }
             if (string.IsNullOrEmpty(roleObj.Id))
             {
                 //create
                 await _roleManager.CreateAsync(new IdentityRole() { Name = roleObj.Name });
+                TempData[Notification.Success] = "Role created successfully";
             }
             else
             {
                 //update
                 var objRoleFromDb = _db.Roles.FirstOrDefault(u => u.Id == roleObj.Id);
+                if (objRoleFromDb == null)
+                {
+                    TempData[Notification.Error] = "Role not found.";
+                    return RedirectToAction(nameof(Index));
+                }
                 objRoleFromDb.Name = roleObj.Name;
                 objRoleFromDb.NormalizedName = roleObj.Name.ToUpper();
                 var result = await _roleManager.UpdateAsync(objRoleFromDb);
-
+                TempData[Notification.Success] = "Role updated successfully";
             }
             return RedirectToAction(nameof(Index));
 
