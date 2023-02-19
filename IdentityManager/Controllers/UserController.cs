@@ -34,13 +34,14 @@ namespace IdentityManager.Controllers
                 }
                 else
                 {
-                    user.Role = roles.FirstOrDefault(u => u.Id == role.RoleId)!.Name;
+                    user.Role = roles.FirstOrDefault(u => u.Id == role.RoleId).Name;
                 }
             }
 
             return View(userList);
 
         }
+
         public IActionResult Edit(string userId)
         {
             var objFromDb = _db.ApplicationUser.FirstOrDefault(u => u.Id == userId);
@@ -62,6 +63,7 @@ namespace IdentityManager.Controllers
             });
             return View(objFromDb);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ApplicationUser user)
@@ -124,6 +126,7 @@ namespace IdentityManager.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
         [HttpPost]
         public IActionResult Delete(string userId)
         {
@@ -148,6 +151,8 @@ namespace IdentityManager.Controllers
                 return NotFound();
             }
 
+            var existingUserClaims = await _userManager.GetClaimsAsync(user);
+
             var model = new UserClaimsViewModel()
             {
                 UserId = userId
@@ -159,12 +164,15 @@ namespace IdentityManager.Controllers
                 {
                     ClaimType = claim.Type
                 };
+                if (existingUserClaims.Any(c => c.Type == claim.Type))
+                {
+                    userClaim.IsSelected = true;
+                }
                 model.Claims.Add(userClaim);
             }
 
             return View(model);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel userClaimsViewModel)
@@ -175,15 +183,28 @@ namespace IdentityManager.Controllers
             {
                 return NotFound();
             }
+            // Remove First
+            var claims = await _userManager.GetClaimsAsync(user);
+            var result = await _userManager.RemoveClaimsAsync(user, claims);
 
-            var result = await _userManager.AddClaimsAsync(user,
+            if (!result.Succeeded)
+            {
+                TempData[Notification.Error] = "Error while removing claims";
+                return View(userClaimsViewModel);
+            }
+            // Update after Removing
+            result = await _userManager.AddClaimsAsync(user,
                 userClaimsViewModel.Claims.Where(c => c.IsSelected).Select(c => new Claim(c.ClaimType, c.IsSelected.ToString()))
                 );
 
-            TempData[Notification.Error] = "Claims updated successfully";
+            if (!result.Succeeded)
+            {
+                TempData[Notification.Error] = "Error while adding claims";
+                return View(userClaimsViewModel);
+            }
+
+            TempData[Notification.Success] = "Claims updated successfully";
             return RedirectToAction(nameof(Index));
         }
-
-
     }
 }
