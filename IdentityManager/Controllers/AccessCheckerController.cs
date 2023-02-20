@@ -47,6 +47,7 @@ namespace IdentityManager.Controllers
         }
 
         //Accessible by Admin users with a claim of create to be True
+        [Authorize(Policy = "Admin_CreateAccess")]
         public IActionResult Admin_CreateAccess()
         {
             return View();
