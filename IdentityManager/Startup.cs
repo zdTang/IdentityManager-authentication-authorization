@@ -18,21 +18,22 @@ namespace IdentityManager
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-        }   
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(
-                options=>options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            
+                options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
             // UserManager has been registered as well !
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            //services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders().AddDefaultUI();
             //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.Configure<IdentityOptions>(opt =>
             {
                 /*Do some research here and understand how to setup option*/
-                
+
                 opt.Password.RequiredLength = 6;
                 opt.Password.RequireLowercase = true;
                 // Gets or sets the TimeSpan a user is locked out for when a lockout occurs. Defaults to 5 minutes.
@@ -40,10 +41,10 @@ namespace IdentityManager
                 opt.Lockout.MaxFailedAccessAttempts = 5;
                 //opt.SignIn.RequireConfirmedAccount = true;
             });
-            services.ConfigureApplicationCookie(opt =>
-            {
-                opt.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/AccessDenied");  // Set up the AccessDeniedPath! The framework need this action, we can specify which action we want use
-            });
+            //services.ConfigureApplicationCookie(opt =>
+            //{
+            //    opt.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/AccessDenied");  // Set up the AccessDeniedPath! The framework need this action, we can specify which action we want use
+            //});
             //Inject dependency
             services.AddTransient<IEmailSender, MailJetEmailSender>();
             services.AddAuthentication().AddFacebook(options =>

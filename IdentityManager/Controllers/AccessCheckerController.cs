@@ -20,7 +20,14 @@ namespace IdentityManager.Controllers
         }
 
         //Accessible by users who have user role
+        [Authorize(Roles = "User")]
         public IActionResult UserAccess()
+        {
+            return View();
+        }
+        [Authorize(Roles = "User,Admin")]
+        //Accessible by users who have user role
+        public IActionResult UserORAdminAccess()
         {
             return View();
         }
