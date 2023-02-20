@@ -61,7 +61,8 @@ namespace IdentityManager.Controllers
         }
 
         //accessible by Admin user with create, edit and delete (AND NOT OR), OR if the user role is superAdmin
-        public IActionResult Admin_Create_Edit_DeleteAccess_SuperAdmin()
+        [Authorize(Policy = "Admin_Create_Edit_DeleteAccess_OR_SuperAdmin")]
+        public IActionResult Admin_Create_Edit_DeleteAccess_OR_SuperAdmin()
         {
             return View();
         }
