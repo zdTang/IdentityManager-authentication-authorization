@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using IdentityManager.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityManager
 {
@@ -60,12 +61,14 @@ namespace IdentityManager
                 options.AddPolicy("Admin_Create_Edit_DeleteAccess", policy => policy.RequireRole("Admin").RequireClaim("create", "True")
                        .RequireClaim("edit", "True")
                        .RequireClaim("Delete", "True"));
-                options.AddPolicy("Admin_Create_Edit_DeleteAccess_OR_SuperAdmin", policy => policy.RequireAssertion(context => (
-                    context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Create" && c.Value == "True")
-                    && context.User.HasClaim(c => c.Type == "Edit" && c.Value == "True")
-                    && context.User.HasClaim(c => c.Type == "Delete" && c.Value == "True")
-                ) || context.User.IsInRole("SuperAdmin")
-            ));
+                //    options.AddPolicy("Admin_Create_Edit_DeleteAccess_OR_SuperAdmin", policy => policy.RequireAssertion(context => (
+                //        context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Create" && c.Value == "True")
+                //        && context.User.HasClaim(c => c.Type == "Edit" && c.Value == "True")
+                //        && context.User.HasClaim(c => c.Type == "Delete" && c.Value == "True")
+                //    ) || context.User.IsInRole("SuperAdmin")
+                //));
+                options.AddPolicy("Admin_Create_Edit_DeleteAccess_OR_SuperAdmin", policy => policy.RequireAssertion(context =>
+                    AuthorizeAdminWithClaimsOrSuperAdmin(context)));
             });
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -102,6 +105,14 @@ namespace IdentityManager
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+        }
+
+        private bool AuthorizeAdminWithClaimsOrSuperAdmin(AuthorizationHandlerContext context)
+        {
+            return (context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Create" && c.Value == "True")
+                        && context.User.HasClaim(c => c.Type == "Edit" && c.Value == "True")
+                        && context.User.HasClaim(c => c.Type == "Delete" && c.Value == "True")
+                    ) || context.User.IsInRole("SuperAdmin");
         }
     }
 }
