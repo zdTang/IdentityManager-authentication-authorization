@@ -52,6 +52,11 @@ namespace IdentityManager
                 options.AppId = Configuration["Facebook:ApiKey"];
                 options.AppSecret = Configuration["Facebook:SecretKey"];
             });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("UserAndAdmin", policy => policy.RequireRole("Admin").RequireRole("User"));
+            });
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
