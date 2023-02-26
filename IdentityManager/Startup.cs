@@ -72,6 +72,7 @@ namespace IdentityManager
                     AuthorizeAdminWithClaimsOrSuperAdmin(context)));
                 options.AddPolicy("OnlySuperAdminChecker", policy => policy.Requirements.Add(new OnlySuperAdminChecker()));
                 options.AddPolicy("AdminWithMoreThan1000Days", policy => policy.Requirements.Add(new AdminWithMoreThan1000DaysRequirement(1000)));
+                options.AddPolicy("FirstNameAuth", policy => policy.Requirements.Add(new FirstNameAuthRequirement("tang")));
             });
             services.AddScoped<IAuthorizationHandler, AdminWithOver1000DaysHandler>();
             services.AddScoped<INumberOfDaysForAccount, NumberOfDaysForAccount>();
