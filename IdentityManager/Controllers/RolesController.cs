@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityManager.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,9 +40,10 @@ namespace IdentityManager.Controllers
             //update
             var objFromDb = _db.Roles.FirstOrDefault(u => u.Id == id);
             return View(objFromDb);
-            
+
         }
         [HttpPost]
+        [Authorize(Policy = "OnlySuperAdminChecker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upsert(IdentityRole roleObj)
         {
@@ -75,6 +77,7 @@ namespace IdentityManager.Controllers
 
         }
         [HttpPost]
+        [Authorize(Policy = "OnlySuperAdminChecker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {

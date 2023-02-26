@@ -10,6 +10,7 @@ using System;
 using IdentityManager.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
+using IdentityManager.Authorize;
 
 namespace IdentityManager
 {
@@ -69,6 +70,7 @@ namespace IdentityManager
                 //));
                 options.AddPolicy("Admin_Create_Edit_DeleteAccess_OR_SuperAdmin", policy => policy.RequireAssertion(context =>
                     AuthorizeAdminWithClaimsOrSuperAdmin(context)));
+                options.AddPolicy("OnlySuperAdminChecker", policy => policy.Requirements.Add(new OnlySuperAdminChecker()));
             });
             services.AddControllersWithViews();
             services.AddRazorPages();
