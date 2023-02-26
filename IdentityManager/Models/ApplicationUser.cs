@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,7 @@ namespace IdentityManager.Models
     {
         [Required]
         public string Name { get; set; }
+        public DateTime DateCreated { get; set; }
         [NotMapped]
         public string RoleId { get; set; }
         [NotMapped]

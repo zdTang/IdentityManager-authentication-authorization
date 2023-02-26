@@ -66,6 +66,10 @@ namespace IdentityManager.Controllers
         {
             return View();
         }
+        public IActionResult OnlyMike()
+        {
+            return View();
+        }
     }
 }
 
