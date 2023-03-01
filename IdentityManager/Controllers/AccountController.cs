@@ -10,10 +10,16 @@ namespace IdentityManager.Controllers
             return View();
         }
 
+        //public IActionResult Register()
+        //{
+        //    var registerViewModel = new RegisterViewModel();
+        //    return View(registerViewModel); 
+        //}
+
         public IActionResult Register()
         {
-            var registerViewModel = new RegisterViewModel();
-            return View(registerViewModel); 
+            //var registerViewModel = new RegisterViewModel();
+            return View();
         }
     }
 }
