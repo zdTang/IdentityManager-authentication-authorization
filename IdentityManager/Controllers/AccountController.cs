@@ -9,12 +9,12 @@ namespace IdentityManager.Controllers
 {
     public class AccountController : Controller
     {
-       // private readonly UserManager<IdentityUser> _userManager;
+        // private readonly UserManager<IdentityUser> _userManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _userSignInManager;
         private readonly IEmailSender _emailSender;
-       
-        public AccountController(UserManager<IdentityUser> userManager,SignInManager<IdentityUser> userSignInManager,IEmailSender emailSender)
+
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> userSignInManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _userSignInManager = userSignInManager;
@@ -24,29 +24,29 @@ namespace IdentityManager.Controllers
         {
             return View();
         }
-        
+
         // Here, I don't think the returnUrl is necessary !!
         [HttpGet]
-        public IActionResult Register(string returnUrl=null)
+        public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             var registerViewModel = new RegisterViewModel();
-            return View(registerViewModel); 
+            return View(registerViewModel);
         }
-        
-        
+
+
         // Here, I don't think the returnUrl is necessary !!
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model,string returnUrl=null)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            
+
             if (ModelState.IsValid)
             {
                 // create a user instance
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name };
-                
+
                 // Need UserManger to create a new USER !
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -64,7 +64,7 @@ namespace IdentityManager.Controllers
                 }
                 AddErrors(result);
             }
-            return View(model); 
+            return View(model);
 
         }
 
@@ -87,9 +87,9 @@ namespace IdentityManager.Controllers
             if (result.Succeeded)
             {
                 await _userSignInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             }
-           
+
             return View("Error");
         }
 
@@ -100,30 +100,30 @@ namespace IdentityManager.Controllers
         /// </summary>
 
         [HttpGet]
-        public IActionResult Login(string returnUrl=null)
+        public IActionResult Login(string returnUrl = null)
         {
             // here the empty viewModel is not necessary!
             ViewData["ReturnUrl"] = returnUrl;
-            return View(); 
+            return View();
         }
-        
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl=null)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
-               
+
                 // Login a user
                 // The last parameter is to say, if the login is failed, exceed the maximum times, if we lockout the user?
-                var result = await _userSignInManager.PasswordSignInAsync(model.Email,model.Password,model.RememberMe,lockoutOnFailure:true);
-               // This approach need use IdentityUser Object
-               //var result2 = await _userSignInManager.SignInAsync();
+                var result = await _userSignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
+                // This approach need use IdentityUser Object
+                //var result2 = await _userSignInManager.SignInAsync();
                 if (result.Succeeded)
                 {
                     // Be aware the difference between RedirectionToAction and Redirect
-                    return returnUrl==null ? RedirectToAction("Index", "Home") : LocalRedirect(returnUrl) ;
+                    return returnUrl == null ? RedirectToAction("Index", "Home") : LocalRedirect(returnUrl);
                 }
 
                 if (result.IsLockedOut)
@@ -131,16 +131,16 @@ namespace IdentityManager.Controllers
                     return View("Lockout");
                 }
                 //AddErrors(result.);   // SignInResult has not Errors property
-                
+
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
-                
-                
+
+
             }
-            return View(model);  
+            return View(model);
 
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
@@ -155,7 +155,7 @@ namespace IdentityManager.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            
+
         }
 
 
@@ -198,9 +198,9 @@ namespace IdentityManager.Controllers
 
         /*The URL in the Email will trigger this Action to help user reset password*/
         [HttpGet]
-        public IActionResult ResetPassword(string code=null)
+        public IActionResult ResetPassword(string code = null)
         {
-            return code==null?View("Error"):View();
+            return code == null ? View("Error") : View();
         }
 
         [HttpPost]
@@ -236,21 +236,22 @@ namespace IdentityManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl=null)
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // request a redirect to the external login provider
-            var redirecturl=Url.Action("ExternalLoginCallback","Account",new {returnUrl});
+            var redirecturl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
             var properties = _userSignInManager.ConfigureExternalAuthenticationProperties(provider, redirecturl);
             return Challenge(properties, provider);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError=null)
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
+            returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                ModelState.AddModelError(string.Empty,$"Error from external provider:{remoteError}");
+                ModelState.AddModelError(string.Empty, $"Error from external provider:{remoteError}");
                 return View(nameof(Login));
             }
 
@@ -259,9 +260,18 @@ namespace IdentityManager.Controllers
             {
                 return RedirectToAction(nameof(Login));
             }
+            // Because we just set "EMAIL Confirmed" to ture. For those external login, we will not confirm Email.so that
+            // If we can find them from the DB, we just assume their Email as confirmed.
+            // https://stackoverflow.com/questions/41598437/signinmanagerexternalloginsigninasync-returns-isnotallowed-for-social-login
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                // Don't save this to the DB
+            }
             // Sign in the user with this external login provider, if the user already has a login
             var result =
-                await _userSignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,isPersistent: false);
+                await _userSignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
                 //update any authentication tokens
@@ -273,13 +283,13 @@ namespace IdentityManager.Controllers
             ViewData["ProviderDisplayName"] = info.ProviderDisplayName;
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             var name = info.Principal.FindFirstValue(ClaimTypes.Name);
-            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email,Name=name });
+            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email, Name = name });
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model,string returnUrl=null)
+        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
