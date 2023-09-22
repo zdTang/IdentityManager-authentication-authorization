@@ -242,7 +242,7 @@ namespace IdentityManager.Controllers
             // request a redirect to the external login provider
             var redirecturl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
             var properties = _userSignInManager.ConfigureExternalAuthenticationProperties(provider, redirecturl);
-            return Challenge(properties, provider);
+            return Challenge(properties, provider);  // call Facebook
         }
 
         //  After Facebook varified User credential, will sent Request to here with User's information
@@ -287,7 +287,7 @@ namespace IdentityManager.Controllers
             return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email, Name = name });
         }
 
-        // If no record for External login User,  create one for it.
+        // If In database, there is no record for this External login User,  create one for it.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
