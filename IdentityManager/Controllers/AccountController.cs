@@ -234,8 +234,9 @@ namespace IdentityManager.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        /// Once click "Facebook" button, will come here
+        /// Will request Facebook from this Action
+
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // request a redirect to the external login provider
@@ -244,7 +245,7 @@ namespace IdentityManager.Controllers
             return Challenge(properties, provider);
         }
 
-
+        //  After Facebook varified User credential, will sent Request to here with User's information
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
@@ -286,7 +287,7 @@ namespace IdentityManager.Controllers
             return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email, Name = name });
         }
 
-
+        // If no record for External login User,  create one for it.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
