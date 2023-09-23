@@ -404,6 +404,20 @@ namespace IdentityManager.Controllers
                 return View(model);
             }
 
+            var info = await _userSignInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            // Because we just set "EMAIL Confirmed" to ture. For those external login, we will not confirm Email.so that
+            // If we can find them from the DB, we just assume their Email as confirmed.
+            // https://stackoverflow.com/questions/41598437/signinmanagerexternalloginsigninasync-returns-isnotallowed-for-social-login
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                // Don't save this to the DB
+            }
             var result = await _userSignInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, rememberClient: false);
 
             if (result.Succeeded)
