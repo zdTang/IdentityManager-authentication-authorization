@@ -244,7 +244,7 @@ namespace IdentityManager.Controllers
          ===============*/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl=null)
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // request a redirect to the external login provider
             var redirecturl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
@@ -421,15 +421,6 @@ namespace IdentityManager.Controllers
             }
 
         }
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-        }
-
     }
 }
 
